@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-from pinn import load_parameters
 
 
 def kutta_next(xy, tau, f):
@@ -38,6 +37,14 @@ def runge_kutta():
         xy_all[i] = kutta_next(xy_all[i-1], tau, f)
 
     plot_solution(t, xy_all)
+
+
+def load_parameters(file='lotka-volterra-parameters.txt'):
+    with open(file) as f:
+        res = []
+        for i in f:
+            res.append(float(i))
+    return res
 
 
 prmtrs = load_parameters()
