@@ -21,12 +21,12 @@ class Net(nn.Module):
         return self.layers_stack(x)
 
 
-def pde(out, t):
-    x = out[:, 0].unsqueeze(1)
-    y = out[:, 1].unsqueeze(1)
-    dxdt = torch.autograd.grad(x, t, torch.ones_like(x), create_graph=True,
+def pde(outt, tt):
+    x = outt[:, 0].unsqueeze(1)
+    y = outt[:, 1].unsqueeze(1)
+    dxdt = torch.autograd.grad(x, tt, torch.ones_like(x), create_graph=True,
                                retain_graph=True)[0]
-    dydt = torch.autograd.grad(y, t, torch.ones_like(y), create_graph=True,
+    dydt = torch.autograd.grad(y, tt, torch.ones_like(y), create_graph=True,
                                retain_graph=True)[0]
 
     pde1 = dxdt - alpha * x + beta * x * y
@@ -36,12 +36,12 @@ def pde(out, t):
     # return pde1, pde2
 
 
-def pdeloss(t, lmbd=1):
-    outt = the_net(t).to(device)
-    f = pde(outt, t)
+def pdeloss(tt, lmbd=1):
+    outt = the_net(tt).to(device)
+    f = pde(outt, tt)
 
     loss_pde = mse(f, torch.zeros_like(f))
-    loss_bc = abs(outt[0][0] - x0) + abs(outt[0][1] - y0)
+    loss_bc = mse(outt[0], torch.Tensor([x0, y0]))
 
     return lmbd * loss_bc + loss_pde
 
@@ -64,11 +64,11 @@ def plot_loss(loss):
     plt.show()
 
 
-def plot_solution(t, out):
+def plot_solution(tt, outt):
     plt.title('Lotka–Volterra PINN approximation')
     plt.xlabel('t')
-    plt.plot(t.detach().numpy(), out[:, 0].detach().numpy(), label='x (prey)')
-    plt.plot(t.detach().numpy(), out[:, 1].detach().numpy(), label='y (predator)')
+    plt.plot(tt.detach().numpy(), outt[:, 0].detach().numpy(), label='x (prey)')
+    plt.plot(tt.detach().numpy(), outt[:, 1].detach().numpy(), label='y (predator)')
     plt.legend()
     plt.show()
 
@@ -98,13 +98,14 @@ t = (torch.linspace(t_start, t_end, t_steps).unsqueeze(1)).to(device)
 t.requires_grad = True
 
 the_net = Net()
-mse = nn.MSELoss()
-lr = 0.001
-optimizer = torch.optim.Adam(the_net.parameters(), lr=lr)
 
 train_switch = 0
 if train_switch:
-    epochs = 7000
+    mse = nn.MSELoss()
+    lr = 0.01
+    optimizer = torch.optim.Adam(the_net.parameters(), lr=lr)
+
+    epochs = 2000
     loss_arr = np.zeros(epochs)
 
     train(epochs)
