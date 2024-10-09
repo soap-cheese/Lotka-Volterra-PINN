@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 from tqdm import tqdm
-import matplotlib.pyplot as plt
+from plottin import *
 
 
 # class Sin(nn.Module):
@@ -66,37 +66,6 @@ def train(ep, parameters, lmbd):
         optimizer.step()
 
 
-def plot_loss(loss, lossbc, losspde, lmbd):
-    plt.subplot(3, 1, 1)
-    plt.title('Loss total')
-    plt.plot(loss, label='loss total')
-    # plt.plot(lossbc, label='loss bc')
-    # plt.plot(losspde, label='loss pde')
-    plt.legend()
-
-    plt.subplot(3, 1, 2)
-    plt.plot(lossbc*lmbd, label='loss bc * lambda')
-    plt.plot(losspde, label='loss pde')
-    plt.legend()
-
-    plt.subplot(3, 1, 3)
-    plt.plot(lossbc, label='loss bc')
-    plt.plot(losspde, label='loss pde')
-    plt.legend()
-
-    plt.subplots_adjust(hspace=0.5, wspace=0.5)
-    plt.show()
-
-
-def plot_solution(tt, outt):
-    plt.title('Lotka–Volterra PINN approximation')
-    plt.xlabel('t')
-    plt.plot(tt.detach().numpy(), outt[:, 0].detach().numpy(), label='x (prey)')
-    plt.plot(tt.detach().numpy(), outt[:, 1].detach().numpy(), label='y (predator)')
-    plt.legend()
-    plt.show()
-
-
 def load_parameters(file='lotka-volterra-parameters.txt'):
     with open(file) as f:
         res = []
@@ -119,7 +88,7 @@ if __name__ == '__main__':
 
     the_net = Net()
 
-    train_switch = 1
+    train_switch = 0
     if train_switch:
         mse = nn.MSELoss()
         lr = 0.01
@@ -130,19 +99,23 @@ if __name__ == '__main__':
         loss_pde_arr = np.zeros(epochs)
         loss_bc_arr = np.zeros(epochs)
 
-        lambd = 1/10 ** 3
+        lambd = 0.00007
 
         train(epochs, parameters=prmtrs[3:], lmbd=lambd)
         torch.save(the_net.state_dict(), 'Lotka–Volterra-weights.pth')
 
+        print(f'first bc loss: {loss_bc_arr[0]}')
+        print(f'first pde loss: {loss_pde_arr[0]}')
         print(f'average bc loss: {loss_bc_arr.mean()}')
         print(f'average pde loss: {loss_pde_arr.mean()}')
+        print(f'last bc loss: {loss_bc_arr[-1]}')
+        print(f'last pde loss: {loss_pde_arr[-1]}')
 
         plot_loss(loss_arr, loss_bc_arr, loss_pde_arr, lambd)
 
         out = the_net(t)
-        plot_solution(t, out)
+        plot_solution(t, out, 'Lotka–Volterra PINN approximation')
     else:
         the_net.load_state_dict(torch.load('Lotka–Volterra-weights.pth', weights_only=True))
         out = the_net(t)
-        plot_solution(t, out)
+        plot_solution(t, out, 'Lotka–Volterra PINN approximation')

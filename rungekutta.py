@@ -1,6 +1,6 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from tqdm import tqdm
+from plottin import *
 
 
 def kutta_next(xy, tau, f, alpha, beta, gamma, delta):
@@ -17,15 +17,6 @@ def f(xy, alpha, beta, gamma, delta):
                      -gamma * y + delta * x * y])
 
 
-def plot_solution(t, out):
-    plt.title('Lotka–Volterra Runge-Kutta approximation')
-    plt.xlabel('t')
-    plt.plot(t, out[:, 0], label='x (prey)')
-    plt.plot(t, out[:, 1], label='y (predator)')
-    plt.legend()
-    plt.show()
-
-
 def runge_kutta(t_start, t_end, t_steps, alpha, beta, gamma, delta, x0, y0, plot=True):
     tau = (t_end - t_start) / t_steps
     t = np.linspace(t_start, t_end, t_steps)
@@ -37,7 +28,7 @@ def runge_kutta(t_start, t_end, t_steps, alpha, beta, gamma, delta, x0, y0, plot
         xy_all[i] = kutta_next(xy_all[i-1], tau, f, alpha, beta, gamma, delta)
 
     if plot:
-        plot_solution(t, xy_all)
+        plot_solution(t, xy_all, 'Lotka–Volterra Runge-Kutta approximation')
     return xy_all
 
 
