@@ -88,18 +88,18 @@ if __name__ == '__main__':
 
     the_net = Net()
 
-    train_switch = 0
+    train_switch = 1
     if train_switch:
         mse = nn.MSELoss()
-        lr = 0.01
+        lr = 0.03
         optimizer = torch.optim.Adam(the_net.parameters(), lr=lr)
 
-        epochs = 1000
+        epochs = 5000
         loss_arr = np.zeros(epochs)
         loss_pde_arr = np.zeros(epochs)
         loss_bc_arr = np.zeros(epochs)
 
-        lambd = 0.00007
+        lambd = 10
 
         train(epochs, parameters=prmtrs[3:], lmbd=lambd)
         torch.save(the_net.state_dict(), 'Lotka–Volterra-weights.pth')
@@ -111,7 +111,7 @@ if __name__ == '__main__':
         print(f'last bc loss: {loss_bc_arr[-1]}')
         print(f'last pde loss: {loss_pde_arr[-1]}')
 
-        plot_loss(loss_arr, loss_bc_arr, loss_pde_arr, lambd)
+        plot_loss(loss_arr, loss_bc_arr, loss_pde_arr)
 
         out = the_net(t)
         plot_solution(t, out, 'Lotka–Volterra PINN approximation')

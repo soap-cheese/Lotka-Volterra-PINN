@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 
-def plot_loss(loss, lossbc, losspde, lmbd):
+def plot_loss_old(loss, lossbc, losspde, lmbd, save=False, title=''):
     plt.subplot(3, 1, 1)
     plt.title('Loss total')
     plt.plot(loss, label='loss total')
@@ -20,10 +20,30 @@ def plot_loss(loss, lossbc, losspde, lmbd):
     plt.legend()
 
     plt.subplots_adjust(hspace=0.5, wspace=0.5)
-    plt.show()
+
+    if not save:
+        plt.show()
+    else:
+        plt.savefig(title)
 
 
-def plot_solution(tt, outt, title):
+def plot_loss(log_loss, log_loss_bc, log_loss_pde, save=False, title=''):
+    plt.xlabel('epochs')
+    plt.ylabel('loss')
+    ax = plt.gca()
+    ax.set_yscale('log')
+    plt.plot(log_loss, label='loss')
+    plt.plot(log_loss_pde, label='loss pde')
+    plt.plot(log_loss_bc, label='loss bc')
+    plt.legend()
+
+    if not save:
+        plt.show()
+    else:
+        plt.savefig(title)
+
+
+def plot_solution(tt, outt, title, save=False):
 
     plt.subplot(1, 2, 1)
     plt.title(title)
@@ -44,4 +64,8 @@ def plot_solution(tt, outt, title):
     plt.ylabel('y')
     plt.plot(outt[:, 0], outt[:, 1])
 
-    plt.show()
+    if not save:
+        plt.show()
+    else:
+        plt.savefig(title)
+

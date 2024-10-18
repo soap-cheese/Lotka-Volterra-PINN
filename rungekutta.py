@@ -17,9 +17,9 @@ def f(xy, alpha, beta, gamma, delta):
                      -gamma * y + delta * x * y])
 
 
-def runge_kutta(t_start, t_end, t_steps, alpha, beta, gamma, delta, x0, y0, plot=True):
+def runge_kutta(t_start, t_end, t_steps, alpha, beta, gamma, delta, x0, y0):
+    t_steps = int(t_steps)
     tau = (t_end - t_start) / t_steps
-    t = np.linspace(t_start, t_end, t_steps)
     xy_all = np.zeros((t_steps, 2))
     xy_all[0][0], xy_all[0][1] = x0, y0
 
@@ -27,8 +27,6 @@ def runge_kutta(t_start, t_end, t_steps, alpha, beta, gamma, delta, x0, y0, plot
     for i in pbar:
         xy_all[i] = kutta_next(xy_all[i-1], tau, f, alpha, beta, gamma, delta)
 
-    if plot:
-        plot_solution(t, xy_all, 'Lotka–Volterra Runge-Kutta approximation')
     return xy_all
 
 
@@ -45,12 +43,8 @@ if __name__ == '__main__':
     t_start = int(prmtrs[0])
     t_end = int(prmtrs[1])
     t_steps = int(prmtrs[2])
-    alpha = prmtrs[3]
-    beta = prmtrs[4]
-    gamma = prmtrs[5]
-    delta = prmtrs[6]
-    x0 = prmtrs[7]
-    y0 = prmtrs[8]
 
-    runge_kutta(t_start, t_end, t_steps, alpha, beta, gamma, delta, x0, y0)
+    out = runge_kutta(*prmtrs)
+    plot_solution(np.linspace(t_start, t_end, t_steps), out,
+                  'Lotka–Volterra Runge-Kutta approximation')
 
