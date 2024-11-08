@@ -27,14 +27,13 @@ def plot_loss_old(loss, lossbc, losspde, lmbd, save=False, title=''):
         plt.savefig(title)
 
 
-def plot_loss(log_loss, log_loss_bc, log_loss_pde, save=False, title=''):
+def plot_loss(save=False, title='', **kwargs):
     plt.xlabel('epochs')
     plt.ylabel('loss')
     ax = plt.gca()
     ax.set_yscale('log')
-    plt.plot(log_loss, label='loss')
-    plt.plot(log_loss_pde, label='loss pde')
-    plt.plot(log_loss_bc, label='loss bc')
+    for i in kwargs:
+        plt.plot(kwargs[i], label=i)
     plt.legend()
 
     if not save:
