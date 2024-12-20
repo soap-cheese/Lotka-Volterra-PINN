@@ -27,7 +27,7 @@ def plot_loss_old(loss, lossbc, losspde, lmbd, save=False, title=''):
         plt.savefig(title)
 
 
-def plot_loss(save=False, title='', **kwargs):
+def plot_loss(save=None, title='', **kwargs):
     plt.xlabel('epochs')
     plt.ylabel('loss')
     ax = plt.gca()
@@ -39,10 +39,12 @@ def plot_loss(save=False, title='', **kwargs):
     if not save:
         plt.show()
     else:
-        plt.savefig(title)
+        plt.savefig(save)
+
+    plt.clf()
 
 
-def plot_solution(tt, outt, title, save=False):
+def plot_solution(tt, outt, title, save=None):
 
     plt.subplot(1, 2, 1)
     plt.title(title)
@@ -59,6 +61,7 @@ def plot_solution(tt, outt, title, save=False):
     plt.legend()
 
     plt.subplot(1, 2, 2)
+    plt.subplots_adjust(wspace=0.3)
     plt.xlabel('x')
     plt.ylabel('y')
     plt.plot(outt[:, 0], outt[:, 1])
@@ -66,5 +69,7 @@ def plot_solution(tt, outt, title, save=False):
     if not save:
         plt.show()
     else:
-        plt.savefig(title)
+        plt.savefig(save)
+
+    plt.clf()
 

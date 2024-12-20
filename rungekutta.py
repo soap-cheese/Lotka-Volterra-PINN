@@ -40,11 +40,14 @@ def load_parameters(file='lotka-volterra-parameters.txt'):
 
 if __name__ == '__main__':
     prmtrs = load_parameters()
-    t_start = int(prmtrs[0])
-    t_end = int(prmtrs[1])
+    t_start = prmtrs[0]
+    t_end = prmtrs[1]
     t_steps = int(prmtrs[2])
 
     out = runge_kutta(*prmtrs)
+    for i in list(range(30)) + list(range(150, 180)):
+        print(f'{i}: {out[i]}')
+
     plot_solution(np.linspace(t_start, t_end, t_steps), out,
                   'Lotka–Volterra Runge-Kutta approximation')
 
